@@ -1,0 +1,39 @@
+1.) dump blir kalt i korrekt tid
+
+
+c      t1=t2
+c      t2=t1+tstep
+
+c!!!!!!!!!!!!!!!!!!!!!!!!
+      t1= tstep * i
+      i= i+1
+      t2= tstep * i
+c!!!!!!!!!!!!!!!!!!!!!!!!
+
+      if (vfr .eq. 0) then
+         call verlet(bforce,rx,ry,th,vx,vy,w,n,t1,t2,dt,first)
+      else
+         call verlet_vel(bforce,rx,ry,th,vx,vy,w,n,t1,t2,dt,first)
+      endif
+c Dump atoms:
+
+
+c!!!!!!!!!!!!!!!!!!!!!!!!
+      if ((t2 .ge. (tut(jj)-tstep/2)).and. (jj .le. nut))  then
+c!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+         jj = jj+1
+         call dump(rx,ry,vx,vy,w,n,t2)
+      endif
+
+      first=.false.
+      return
+      end
+
+
+2.) Hvis en bruker fsprings (uten grafikk) saa kan en gi navnet av inputfilen
+slik:
+
+>./fsprings
+>'jan.test'

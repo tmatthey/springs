@@ -1,0 +1,191 @@
+
+FASTER, FASTER, ....
+
+1.) Test ((abs(rx(i) - rx(j)) .lt. rcut).and.(abs(ry(i) - ry(j)) .lt. rcut)) i steden for (rxij**2+ryij**2)**0.5 .lt. rcut)
+
+2.) Jeg fant ut at det kan loenne seg aa ha en loop som er kort. Da passer den helt in i cache'n.
+
+3.) Jeg bruker en grid med box av stoerrelse rcut*rcut. En box har max 16 particler. Det er en enkle maate aa faa programmet til O(N). 
+
+4.) Resultatene
+
+JP    : uten 1.) og 3.) (/data/matthey/simu/jangrains /data/matthey/simu/in/jan.test)
+Th I  : uten grid       (/data/matthey/simu/simple /data/matthey/simu/in/jan.test)
+Th II : med grid        (/data/matthey/simu/springs /data/matthey/simu/in/jan.test)
+
+nlay1	n	steps	     JP	   Th I	  Th II
+-----------------------------------------------
+  9	  186	50	 14.573	  5.069	  2.633
+ 11	  240	50	 25.926	  8.070	  3.551
+ 13	  316	50	 45.854	 12.777	  4.740
+ 15	  386	50	 71.563	 18.772	  5.899
+ 17	  478	50	112.369	 27.718	  7.569
+ 19	  564	50		 37.694	  9.144
+ 21	  672	50		 50.881	 10.862
+ 23	  774	50		 66.546	 12.844
+ 25	  898	50		 87.688	 15.131
+ 27	 1016	50		111.403	 18.227
+ 29	 1156	50			 21.205
+ 31	 1290	50			 23.754
+ 33	 1446	50			 25.206
+ 35	 1596	50			 29.887
+ 37	 1768	50			 31.678
+ 39	 1934	50			 37.177
+ 41	 2122	50			 40.986
+ 43	 2304	50			 45.357
+ 45	 2508	50			 48.905
+ 67	 5196	50			106.800
+ 95	10026	50	       9170.041	235.598 
+103	11694	50			288.022 
+201
+
+/data/matthey/in/jan.test:
+
+out/test                                      
+3.0  50  0.002   0.25                  : tstop,nstop,dt,djitt
+5  0.0 5.0 10.0 15.0 20.0 25.0 50.0               
+9  2.0 7  2.0 2.0                : nlay1,dx1,nlay2,dx2,d12
+1.0 1.0 2.0                         : mass1, mass2, rcut        
+5.0  10.0 12111 0              : vfr,tmp, iseed, Q (termostat koupling)  
+0                                   :  nvf, (vfarr(i), i = 1,nvf)   NOT USED
+0                                   : nt1, ((t1arr(i), i = 1,nt1))   NOT USED
+0                                   : nt2, (t2arr(i), i = 1,nt2)   NOT USED
+0.0 0.0                              : fx,fy 
+100.0 1.0  0 0                      : k_n, power, 0 0 not used active-active
+100.0 1.0  0 0                      : k_n, power,0 0 not used act-bed interactio
+1000.0 1.0  0 0                      : fefee,fefes,mfe,nfe (L-J para's Fe-Fe)
+20.0 5.0 0.5 0.5 1.0 1.0 2.0    : gammaN, gammaS, my1, my12, r1 r2 r0
+
+
+5.) Vanlig sqrt() er kjappere enn ssqrt() fra F.18. Se /data/matthey/simu/sqrttest.f. 
+
+
+
+WHAT IS SLOW
+
+1.) Naar en velger nlay1 > 200 tar det lang tid (5 minutter) aa faa noe paa sjermen. Initroutinen din maa bli kjappere (sortering ?).
+
+
+
+BUGS FIXED
+
+1.) (r1/r1 + r2)   -> (r1/(r1 + r2))
+
+2.) Dynamic Memory Allocations
+
+3.) sr = 0 hvis (r1r1-rijsq <= 0)
+
+4.) writeDisplay() taaler mer 20'000 partikler
+
+
+
+WHAT'S NEW
+
+1.) Med -ps skriver du ut bildet som PostScript
+
+2.) Du kan kjoere programmet med 100'000 partikler (NMAX = 100000 i global.h).
+
+3.) SPRINGS velger verlet() hvis vfr = 0 ellrs verlet_vet(). Vi kunne innfoere en variable som spesifiserer verlet-routinen som maa brukes.
+
+4.) Grid gjoer det mulig aa gjoer med nlay1 > 100. Grid er dobbelt saa stor som aluminiumblokk.
+
+
+            :  :  :  :  :  :
+(-L1/2,H1)  |  |  |  |  |  |  (L1/2,H1)
+            | 1| 2| 3| 4| 5|
+            +--+--+--+--+--+
+            | 6| 7| 8| 9|10|
+            +--+--+--+--+--+
+            |11|12|13|14|15|
+            +--+--+--+--+--+
+            |16|17|18|19|20|
+            +--+--+--+--+--+
+            |21|22|23|24|25|
+            +--+--+--+--+--+
+            |26|27|28|29|30|
+(-L1/2,-H1) |  |  |  |  |  |  (L1/2,-H1)
+            :  :  :  :  :  :
+
+	
+	med ngridw = 5 og ngridh = 6
+
+
+POESCHEL
+
+1.) Jeg proevde med verlet_vel(), verlet() og parameterne fra paperen (Poeschel), men jeg fikk det ikke aa stemme. Dvs at veggen og Al sprakk fullstendig. Naar jeg valgte gamman og gammas mindre (/10) og k_n stoerre (*10) gikk det bra. Det er fortsatt problemer naar det er flere Al (nlay1 = 70) og Fy < -1. Da sprekker vanlig veggen, hvis k_n < 1'000'000.
+
+2.) Etter en stund fant jeg flere paper fra Poeschel paa nettet og et diplomarbeid fra Volkhard Buchholtz. Poeschel har skrevet mange paper. Da fant jeg og flere mpeg-filmer. Denne viser rotasjon:
+xanim /data/matthey/mpeg/rajfast.avi
+
+
+PARALLEL
+
+1.) Jeg fant flere paper paa nettet om paralleisering. Det ser ut at det finns flere programmer som bruker parallelle algoritmer for aa gjoere med flere millioner. Det mest bruker en grid (cell).
+
+2.) Hvis vi kan bruke en maskin med fellesminne, kan vi faa en parallel versjon som er kjapp. I foerst omgang maa det beregnes kreftene. Da overtar hver prosessor (ns1+ns2)/(antall prosessorer) partikler. Saa maa oppdateres grid. Da overtar hver prosessor (ngridw*ngridh)/(antall prosessorer) box. Det eneste vi maa passe paa at vi ikke skriver i samme variabler samtidig.  
+
+
+BOUNDARIES
+
+1.) Jeg synes det er bedre aa perodic boundaries i x-retning enn aa bare skifte partiklene. Da faar en ingen luke og det ser ut at det er ikke lett aa plassere partiklenen.
+
+
+
+PROBLEMS
+
+1.) Det er mulig at rotasjon vises motsatt retning. y-retning paa sjermen gaar ned og ikke opp som vanlig. Du kann skifte fortegn av rotasjon i 'display.c' i disse linjene:
+grep -n '\-tp\[' display.c
+
+Ellers kann du gjoere slik:
+cp display.c display.c~;sed s/-tp/tp/ display.c~ > display.c
+
+2.) Det er ikke mulig aa burke farger med PBM. Da faar du bare en hvit side.
+
+3.) Naar aluminium sprekker kan det skje at programmet stopper, for det er for mange partikler in en box. Boksene som er oeverst og nederst er i en y-retining ubegrenset.
+
+
+	    :  :  :  :  :  :
+(-L1/2,H1)  |  |  |  |  |  |  (L1/2,H1)
+	    | 1| 2| 3| 4| 5|
+	    +--+--+--+--+--+
+	    | 6| 7| 8| 9|10|
+	    +--+--+--+--+--+
+	    |11|12|13|14|15|
+ 	    +--+--+--+--+--+
+ 	    |16|17|18|19|20|
+	    +--+--+--+--+--+
+ 	    |21|22|23|24|25|
+ 	    +--+--+--+--+--+
+ 	    |26|27|28|29|30|
+(-L1/2,-H1) |  |  |  |  |  |  (L1/2,-H1)
+            :  :  :  :  :  :
+
+ 
+
+
+TESTS
+
+1.) Veggen sprekker. Jeg synes at veggen ikke er fast nok og at Fy virker for svak paa Al.
+
+out/test                                      
+300.0  5000  0.002   0.25                  : tstop,nstop,dt,djitt
+5  0.0 5.0 10.0 15.0 20.0 25.0 50.0               
+23  2.5 5  2.0 2.0                : nlay1,dx1,nlay2,dx2,d12
+1.0 1.0 2.0                         : mass1, mass2, rcut        
+5.0  10.0 12111 0              : vfr,tmp, iseed, Q (termostat koupling)  
+0                                   :  nvf, (vfarr(i), i = 1,nvf)   NOT USED
+0                                   : nt1, ((t1arr(i), i = 1,nt1))   NOT USED
+0                                   : nt2, (t2arr(i), i = 1,nt2)   NOT USED
+1.0 -1.0                              : fx,fy 
+100.0 1.0  0 0                      : k_n, power, 0 0 not used active-active
+100.0 1.0  0 0                      : k_n, power,0 0 not used act-bed interactio
+10000.0 1.0  0 0                      : fefee,fefes,mfe,nfe (L-J para's Fe-Fe)
+20.0 5.0 0.5 0.5 1.0 1.0 2.0    : gammaN, gammaS, my1, my12, r1 r2 r0
+
+
+
+PROGRAMS
+
+
+
+

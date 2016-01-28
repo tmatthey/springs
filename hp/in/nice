@@ -1,0 +1,14 @@
+out/nice                                       
+80.0  16000  0.002   2                  : tstop,nstop,dt,djitt
+16 0 5 10  15 20 25 30 35 40 45 50 55 60 65 70 75 80               
+7  2.0 1  2.0 2.0                : nlay1,dx1,nlay2,dx2,d12
+1 1.0 2.05                         : mass1, mass2, rcut        
+5.0  300.0 1 0              : vfr,tmp, iseed, Q (termostat koupling)  
+0                                   :  nvf, (vfarr(i), i = 1,nvf)   NOT USED
+0                                   : nt1, ((t1arr(i), i = 1,nt1))   NOT USED
+0                                   : nt2, (t2arr(i), i = 1,nt2)   NOT USED
+0.0 -100.0                              : fx,fy 
+10000.0 1.0  0 0                      : k_n, power, 0 0 not used active-active
+20000.0 1.0  0 0                      : k_n, power,0 0 not used act-bed interactio
+30000.0 1  0 0                      : fefee,fefes,mfe,nfe (L-J para's Fe-Fe)
+100 10.0 0.5 0.5 1.0 1.0 2.0    : gammaN, gammaS, my1, my12, r1 r2 r0

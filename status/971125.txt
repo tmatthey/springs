@@ -1,0 +1,11 @@
+1.) SPRINGS skrive og GIF (-gif). Det brukes ppmtogif!
+
+2.) SPRINGS kan avsluttes selvstendig naar det har kommet til nstop steg (-quit).
+
+3.) Noen OS kan ikke skrive PPM (se pc-janp). Det blir bare rot.
+
+4.) Hastighetsprofilen blir laget med (xr(i) - rx'(i)) / delta t i steden for vx(i). Det gir en en gjennomsnitthastighet og ikke hastighet for t.
+
+5.) fort.44 inneholder friksjon av lagene som foeler vfr.
+
+6.) SPRINGS virker paa origin og alpha.

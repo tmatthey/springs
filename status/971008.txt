@@ -1,0 +1,16 @@
+1.) my mellom Al og Fe fikset.
+
+2.) Bare det oeverste laget (i=[1,nlay1]) blir paavirket av fy. Alle Al-partikler
+    blir paavirket av fx.
+
+3.) creslabcompact() gir en kompakt slab med stoerre tetthet. Dermed blir
+    det tidligere likevekt for trykk og dL. 
+
+4.) verlet() er slettet.
+
+5.) dL gir faktoren om hvor mye slab har minket i y-retting i forhold til 
+    start-slab.
+
+6.) mrx og mry er gjennomsnitt (reltif) av koordinatene av Al.
+ 
+7.) Det er mulig aa kjoere programme uten grafikk - bare ForTran.

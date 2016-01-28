@@ -1,0 +1,60 @@
+1.) Kjoering av SPRINGS
+
+ASFYS (med grafikk):
+
+>cd /heim/matthey/springs/asfys
+>springs ...
+
+ASK (uten grafikk):
+
+>cd /Home/origin1/janp/springs
+>fsprings ...
+
+
+
+2.) SPRINGS uten grafikk
+
+Aa kompilere programmet uten grafik og c-filer:
+
+>make clean
+>make nogfx 
+
+
+Aa kjoere programmet uten grafikk:
+
+>fsprings in/test
+
+
+3.) Rotasjonen
+
+Det var en feil med rotasjonen av partiklene som er fikset naa. See paa testen:
+
+>springs in/rotalal
+>springs in/rotalfe
+
+4.) Dump / Energi, Hastighet og Rotasjon
+
+Springs skriver ut energi (ekin1/ns1, erot/ns1, load/ns1, firk/ns1; ekin2/ns2,
+epot/ns2) i en egen fil. Filnavnet (namnE00) inholder en stor E.
+Dump beregner hastigheiten (namnV00) og rotasjonen (namnW00) langs y-koord 
+for alle partiklene. 
+
+5.) NEVER --- EVER --- FORGET
+
+Det er lurt aa definere variabler i subroutine. I.e.:
+
+1 >      subroutine dump(rx,ry,vx,vy,n,t2)
+2 >
+3 >c
+4 >c Dump active atoms to new data-file.
+5 >c
+6 >      parameter (nmax=100000)
+7 >      double precision t2
+
+Hvis du glemmer linje 7 da blir det bar rot.
+
+6.) vfr
+
+Naa for alle partikler med ry(i) >= H2/4 hastigheten vfr. I tillegg skal alle
+partikler med ry(i) >= H2/2 - r1 ha vy(i) <= 0.
+
